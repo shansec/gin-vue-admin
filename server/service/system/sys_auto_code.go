@@ -52,18 +52,21 @@ var (
 
 func Init(Package string) {
 	injectionPaths = []injectionMeta{
+		// 接口
 		{
 			path: filepath.Join(global.GVA_CONFIG.AutoCode.Root,
 				global.GVA_CONFIG.AutoCode.Server, fmt.Sprintf(global.GVA_CONFIG.AutoCode.SApi, Package), "enter.go"),
 			funcName:    "ApiGroup",
 			structNameF: "%sApi",
 		},
+		// 路由
 		{
 			path: filepath.Join(global.GVA_CONFIG.AutoCode.Root,
 				global.GVA_CONFIG.AutoCode.Server, fmt.Sprintf(global.GVA_CONFIG.AutoCode.SRouter, Package), "enter.go"),
 			funcName:    "RouterGroup",
 			structNameF: "%sRouter",
 		},
+		// service
 		{
 			path: filepath.Join(global.GVA_CONFIG.AutoCode.Root,
 				global.GVA_CONFIG.AutoCode.Server, fmt.Sprintf(global.GVA_CONFIG.AutoCode.SService, Package), "enter.go"),
@@ -683,8 +686,8 @@ func (autoCodeService *AutoCodeService) DelPackage(a system.SysAutoCode) error {
 func (autoCodeService *AutoCodeService) CreatePackageTemp(packageName string) error {
 	Init(packageName)
 	pendingTemp := []autoPackage{{
-		path: packageService,
-		name: packageServiceName,
+		path: packageService,     // service/%s/enter.go
+		name: packageServiceName, // service
 		temp: string(subcontract.Server),
 	}, {
 		path: packageRouter,
