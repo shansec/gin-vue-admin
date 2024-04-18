@@ -3,10 +3,11 @@ package core
 import (
 	"flag"
 	"fmt"
-	"github.com/flipped-aurora/gin-vue-admin/server/core/internal"
-	"github.com/gin-gonic/gin"
 	"os"
 	"path/filepath"
+
+	"github.com/flipped-aurora/gin-vue-admin/server/core/internal"
+	"github.com/gin-gonic/gin"
 
 	"github.com/fsnotify/fsnotify"
 	"github.com/spf13/viper"
@@ -70,5 +71,6 @@ func Viper(path ...string) *viper.Viper {
 
 	// root 适配性 根据root位置去找到对应迁移位置,保证root路径有效
 	global.GVA_CONFIG.AutoCode.Root, _ = filepath.Abs("..")
+	fmt.Printf("******************%v", global.GVA_CONFIG.AutoCode.Root)
 	return v
 }
