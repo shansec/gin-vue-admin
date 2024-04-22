@@ -438,9 +438,11 @@ func (autoCodeService *AutoCodeService) CreateTemp(autoCode system.AutoCodeStruc
 // @return: []string, error
 
 func (autoCodeService *AutoCodeService) GetAllTplFile(pathName string, fileList []string) ([]string, error) {
+	// 返回多个文件
 	files, err := os.ReadDir(pathName)
 	for _, fi := range files {
 		if fi.IsDir() {
+			// 递归读取文件
 			fileList, err = autoCodeService.GetAllTplFile(pathName+"/"+fi.Name(), fileList)
 			if err != nil {
 				return nil, err
@@ -606,6 +608,7 @@ func (autoCodeService *AutoCodeService) getNeedList(autoCode *system.AutoCodeStr
 	needMkdir = make([]string, 0, len(tplFileList)) // 当文件夹下存在多个tpl文件时，改为map更合理
 	// 根据文件路径生成 tplData 结构体，待填充数据
 	for _, value := range tplFileList {
+		// autoCode.Package 创建的包名
 		dataList = append(dataList, tplData{locationPath: value, autoPackage: autoCode.Package})
 	}
 	// 生成 *Template, 填充 template 字段
@@ -716,11 +719,12 @@ func (autoCodeService *AutoCodeService) CreatePackageTemp(packageName string) er
 	}
 	// 选择模板
 	for _, s := range pendingTemp {
+		// 创建文件夹
 		err := os.MkdirAll(filepath.Dir(s.path), 0755)
 		if err != nil {
 			return err
 		}
-
+		// 创建文件
 		f, err := os.Create(s.path)
 		if err != nil {
 			return err
