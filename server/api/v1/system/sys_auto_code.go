@@ -35,6 +35,7 @@ func (autoApi *AutoCodeApi) PreviewTemp(c *gin.Context) {
 		return
 	}
 	a.Pretreatment() // 处理go关键字
+	// 包名首字母处理
 	a.PackageT = utils.FirstUpper(a.Package)
 	autoCode, err := autoCodeService.PreviewTemp(a)
 	if err != nil {

@@ -165,6 +165,7 @@ func (autoCodeService *AutoCodeService) PreviewTemp(autoCode system.AutoCodeStru
 			autoCode.NeedJSON = true
 		}
 
+		// 是否使用gva默认Model
 		if autoCode.GvaModel {
 			autoCode.PrimaryField = &system.Field{
 				FieldName:    "ID",
@@ -177,6 +178,7 @@ func (autoCodeService *AutoCodeService) PreviewTemp(autoCode system.AutoCodeStru
 			}
 		}
 		if !autoCode.GvaModel && autoCode.PrimaryField == nil && autoCode.Fields[i].PrimaryKey {
+			// 设置主键
 			autoCode.PrimaryField = autoCode.Fields[i]
 		}
 	}
@@ -453,6 +455,7 @@ func (autoCodeService *AutoCodeService) GetAllTplFile(pathName string, fileList 
 			}
 		}
 	}
+	// fileList 是文件相对路径的集合
 	return fileList, err
 }
 
@@ -621,24 +624,38 @@ func (autoCodeService *AutoCodeService) getNeedList(autoCode *system.AutoCodeStr
 	// 生成文件路径，填充 autoCodePath 字段，readme.txt.tpl不符合规则，需要特殊处理
 	// resource/template/web/api.js.tpl -> autoCode/web/autoCode.PackageName/api/autoCode.PackageName.js
 	// resource/template/readme.txt.tpl -> autoCode/readme.txt
+
+	// resource/autocode_template/readme.txt.tpl
+	// resource/autocode_template/server/**
 	for index, value := range dataList {
+		// 例如 value = resource/autocode_template/server/api.go.tpl
+		// 例如 value = resource/autocode_template/web/api.js.tpl
 		trimBase := strings.TrimPrefix(value.locationPath, autocodePath+"/")
 		if trimBase == "readme.txt.tpl" {
 			dataList[index].autoCodePath = autoPath + "readme.txt"
 			continue
 		}
 
+		// trimBase = server/api.go.tpl
+		// trimBase = web/api.js.tpl
 		if lastSeparator := strings.LastIndex(trimBase, "/"); lastSeparator != -1 {
+			// origFileName = api.go
+			// origFileName = api.js
 			origFileName := strings.TrimSuffix(trimBase[lastSeparator+1:], ".tpl")
 			firstDot := strings.Index(origFileName, ".")
 			if firstDot != -1 {
 				var fileName string
+				// origFileName[firstDot:] = go
+				// origFileName[firstDot:] = js
 				if origFileName[firstDot:] != ".go" {
+					// fileName = admin.js
 					fileName = autoCode.PackageName + origFileName[firstDot:]
 				} else {
+					// fileName = admin.go
 					fileName = autoCode.HumpPackageName + origFileName[firstDot:]
 				}
-
+				// autocode_template/server/admin/api/admin.go
+				// autocode_template/web/admin/api/admin.js
 				dataList[index].autoCodePath = filepath.Join(autoPath, trimBase[:lastSeparator], autoCode.PackageName,
 					origFileName[:firstDot], fileName)
 			}
